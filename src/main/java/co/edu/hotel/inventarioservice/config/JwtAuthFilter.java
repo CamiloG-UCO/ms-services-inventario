@@ -1,6 +1,6 @@
 package co.edu.hotel.inventarioservice.config;
 
-import co.uco.hotel.userservice.services.jwt.JwtService;
+import co.edu.hotel.inventarioservice.services.jwt.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
