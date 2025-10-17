@@ -1,4 +1,4 @@
-package co.edu.hotel.inventarioservice.config;
+package co.uco.hotel.userservice.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
