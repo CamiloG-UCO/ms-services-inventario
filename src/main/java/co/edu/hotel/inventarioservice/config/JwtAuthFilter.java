@@ -1,4 +1,4 @@
-package co.uco.hotel.userservice.config;
+package co.edu.hotel.inventarioservice.config;
 
 import co.edu.hotel.inventarioservice.services.jwt.JwtService;
 import jakarta.servlet.FilterChain;
