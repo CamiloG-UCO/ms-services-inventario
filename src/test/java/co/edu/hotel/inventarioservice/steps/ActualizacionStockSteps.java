@@ -7,6 +7,7 @@ import co.edu.hotel.inventarioservice.repository.producto.ProductoRepository;
 import co.edu.hotel.inventarioservice.services.inventario.InventarioService;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.*;
+import org.mockito.ArgumentCaptor;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -58,35 +59,43 @@ public class ActualizacionStockSteps {
         when(productoRepository.findById(1L)).thenReturn(Optional.of(producto));
         when(inventarioRepository.findByProductoAndUbicacion(producto, "Almacén central"))
                 .thenReturn(Optional.of(inventario));
+        when(inventarioRepository.save(any(InventarioEntity.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
     }
 
     @When("el usuario {string} registre consumo de {string} para la habitación {string}")
     public void el_usuario_registre_consumo(String usuario, String consumo, String habitacion) {
 
         Integer cantidadConsumida = Integer.parseInt(consumo.split(" ")[0]); // "10 unidades" -> 10
-        Integer nuevaCantidad = inventario.getCantidad() - cantidadConsumida;
-        nuevaCantidadEsperada = nuevaCantidad;
+        nuevaCantidadEsperada = inventario.getCantidad() - cantidadConsumida;
 
-        // Actualizamos inventario simulado
-        inventario.setCantidad(nuevaCantidad);
-        inventario.setUltimaActualizacion(LocalDateTime.now());
-
-        when(inventarioRepository.save(inventario)).thenReturn(inventario);
-
-        // Fake registro movimiento
         movimientoRegistrado = "consumo_housekeeping: " + habitacion;
         usuarioRegistrado = usuario;
+
+        inventarioService.actualizarStock(
+                producto.getId(),
+                inventario.getUbicacion(),
+                nuevaCantidadEsperada
+        );
     }
 
     @Then("el sistema debe actualizar la cantidad a {string}")
     public void el_sistema_debe_actualizar_cantidad(String cantidadEsperada) {
-        assertEquals(Integer.parseInt(cantidadEsperada.split(" ")[0]), inventario.getCantidad());
+
+        ArgumentCaptor<InventarioEntity> captor = ArgumentCaptor.forClass(InventarioEntity.class);
+        verify(inventarioRepository, atLeastOnce()).save(captor.capture());
+
+        InventarioEntity inventarioGuardado = captor.getValue();
+
+        assertEquals(Integer.parseInt(cantidadEsperada.split(" ")[0]), inventarioGuardado.getCantidad());
+        assertNotNull(inventarioGuardado.getUltimaActualizacion());
     }
 
     @And("registrar movimiento {string} por {string}")
     public void registrarMovimientoPor(String movimiento, String usuario) {
         assertEquals(movimiento, movimientoRegistrado);
         assertEquals(usuario, usuarioRegistrado);
+        verify(productoRepository, atLeastOnce()).findById(producto.getId());
+        verify(inventarioRepository, atLeastOnce()).findByProductoAndUbicacion(producto, inventario.getUbicacion());
     }
 }
-
