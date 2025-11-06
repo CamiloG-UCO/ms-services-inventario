@@ -31,10 +31,11 @@ public class InventarioSteps {
 
     @Before
     public void setup() {
+        // 🔹 Creamos mocks (no hay BD real)
         inventarioRepository = Mockito.mock(InventarioRepository.class);
         productoRepository = Mockito.mock(ProductoRepository.class);
 
-        // Constructor real de tu service
+        // 🔹 Inyectamos los mocks al servicio
         inventarioService = new InventarioService(inventarioRepository, productoRepository);
     }
 
@@ -46,6 +47,7 @@ public class InventarioSteps {
         producto.setCategoria("aseo");
         producto.setBarcode("123456789");
 
+        // 🔹 Mock del repositorio de productos
         when(productoRepository.findById(1L))
                 .thenReturn(Optional.of(producto));
     }
@@ -57,14 +59,14 @@ public class InventarioSteps {
         inventario.setProducto(producto);
         inventario.setUbicacion("Almacén");
         inventario.setStockMinimo(Integer.parseInt(minimo));
-        inventario.setUltimaActualizacion(LocalDateTime.now());
+        inventario.setUltimaActualizacion(LocalDateTime.of(2025, 11, 5, 12, 0)); // 🔹 Fecha fija mockeada
     }
 
     @And("la cantidad actual del inventario es {string}")
     public void la_cantidad_actual_del_inventario_es(String cantidad) {
         inventario.setCantidad(Integer.parseInt(cantidad));
 
-        // Mock inventario por producto y ubicación
+        // 🔹 Mock de consultas del repositorio
         when(inventarioRepository.findByProductoAndUbicacion(producto, "Almacén"))
                 .thenReturn(Optional.of(inventario));
 
@@ -74,9 +76,10 @@ public class InventarioSteps {
 
     @When("el sistema ejecuta la validación diaria de inventarios")
     public void el_sistema_ejecuta_la_validacion_diaria_de_inventarios() {
-
+        // 🔹 Simulamos la validación del servicio sin tocar BD real
         resultadoValidacion = inventarioService.validarStockMinimo();
 
+        // 🔹 Simulación del envío de notificación
         if (!resultadoValidacion.isEmpty()) {
             notificacionEnviada = true;
             asuntoCorreo = "Alerta: stock bajo " + producto.getNombre();
@@ -86,6 +89,7 @@ public class InventarioSteps {
     @Then("se debe enviar una notificación por correo a {string}")
     public void se_debe_enviar_una_notificacion_por_correo_a(String correoDestino) {
         assertTrue(notificacionEnviada, "La notificación de inventario bajo no fue enviada");
+        // 🔹 Aquí podrías mockear un servicio de email si existiera
     }
 
     @And("el asunto del correo debe ser {string}")
