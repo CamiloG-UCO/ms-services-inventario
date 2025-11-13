@@ -96,7 +96,7 @@ public class AsignarProductoSteps {
 
         when(inventarioRepository.save(any(InventarioEntity.class))).thenReturn(inventario);
 
-        inventarioService.registrarProductoEnInventario(productoCreado.getId(), Integer.parseInt(cantidad), ubicacion);
+        inventarioService.registrarProductoEnInventario(productoCreado.getId(), Integer.parseInt(cantidad), ubicacion, "Santa Marta Resort", 10);
 
         // ====== Resultados esperados ======
         codigoGenerado = productoCreado.getCodigo();

@@ -19,10 +19,12 @@ public class InventarioController {
     public ResponseEntity<InventarioEntity> registrarProductoEnInventario(
             @RequestParam Long productoId,
             @RequestParam Integer cantidad,
-            @RequestParam String ubicacion) {
+            @RequestParam String ubicacion,
+            @RequestParam String hotel,
+            @RequestParam Integer stockMinimo) {
 
         return ResponseEntity.ok(
-                inventarioService.registrarProductoEnInventario(productoId, cantidad, ubicacion)
+                inventarioService.registrarProductoEnInventario(productoId, cantidad, ubicacion, hotel, stockMinimo)
         );
     }
 
