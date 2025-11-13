@@ -79,7 +79,8 @@ public class RegistroProductoSteps {
 
         // Llamada real al service (usando los mocks)
         Integer cantidadInt = Integer.parseInt(cantidad);
-        inventario = inventarioService.registrarProductoEnInventario(producto.getId(), cantidadInt, ubicacion);
+        Integer stockMinimoInt = Integer.parseInt(stockMinimo);
+        inventario = inventarioService.registrarProductoEnInventario(producto.getId(), cantidadInt, ubicacion, "Santa Marta Resort", stockMinimoInt);
 
         // Simulaciones/valores que el test verifica después
         codigoGenerado = producto.getCodigo(); // el código viene del producto preexistente

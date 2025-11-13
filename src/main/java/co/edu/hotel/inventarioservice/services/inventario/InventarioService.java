@@ -17,7 +17,7 @@ public class InventarioService {
     private final InventarioRepository inventarioRepository;
     private final ProductoRepository productoRepository;
 
-    public InventarioEntity registrarProductoEnInventario(Long productoId, Integer cantidad, String ubicacion) {
+    public InventarioEntity registrarProductoEnInventario(Long productoId, Integer cantidad, String ubicacion, String hotel, Integer stockMinimo) {
         ProductoEntity producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
@@ -25,6 +25,8 @@ public class InventarioService {
         inventario.setProducto(producto);
         inventario.setCantidad(cantidad);
         inventario.setUbicacion(ubicacion);
+        inventario.setHotel(hotel);
+        inventario.setStockMinimo(stockMinimo);
         inventario.setUltimaActualizacion(LocalDateTime.now());
 
         return inventarioRepository.save(inventario);
